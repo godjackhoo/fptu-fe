@@ -12,64 +12,22 @@ import {
     Divider,
 } from "antd";
 
-import moment from "moment";
 import { Link } from "react-router-dom";
 import Helmet from "react-helmet-async";
 import paramCase from "param-case";
-import { getArticles } from "../../utils/Crawl";
-import LocalStorageUtils, { LOCAL_STORAGE_KEY } from "../../utils/LocalStorage";
+import { connect } from "react-redux";
+import { getCodedaoArticles } from "./actions/CodeDaoActions";
 
 const { Content } = Layout;
 const { Meta } = Card;
 
 class Index extends Component {
-    state = {
-        loading: true,
-        posts  : [],
-    };
-
     componentDidMount() {
-        const newsExpire = parseInt(
-            LocalStorageUtils.getItem(
-                LOCAL_STORAGE_KEY.TOIDICODEDAO_NEWS_EXPIRE,
-                null
-            )
-        );
-        const now = parseInt(moment().unix());
+        const { getCodedaoArticles, codedaoReducer } = this.props;
+        const { posts } = codedaoReducer;
 
-        if (
-            LocalStorageUtils.getItem(
-                LOCAL_STORAGE_KEY.TOIDICODEDAO_NEWS,
-                null
-            ) !== null &&
-            now - newsExpire <= 0
-        ) {
-            let posts = JSON.parse(
-                LocalStorageUtils.getItem(
-                    LOCAL_STORAGE_KEY.TOIDICODEDAO_NEWS,
-                    null
-                )
-            );
-
-            posts = this.filterNotLightningTalk(posts);
-
-            this.setState({
-                posts,
-                loading: false,
-            });
-        } else {
-            getArticles(
-                ["https://toidicodedao.com", "https://codeaholicguy.com"],
-                true,
-                "toidicodedao"
-            ).then(posts => {
-                posts = this.filterNotLightningTalk(posts);
-
-                this.setState({
-                    posts,
-                    loading: false,
-                });
-            });
+        if (!posts.length) {
+            getCodedaoArticles();
         }
     }
 
@@ -147,7 +105,8 @@ class Index extends Component {
     }
 
     render() {
-        const { loading, posts } = this.state;
+        const { codedaoReducer } = this.props;
+        const { loading, posts } = codedaoReducer;
 
         return (
             <Content className="content-container">
@@ -207,4 +166,17 @@ class Index extends Component {
     }
 }
 
-export default Index;
+const mapStateToProps = ({ codedaoReducer }) => {
+    return {
+        codedaoReducer,
+    };
+};
+
+const mapDispatchToProps = {
+    getCodedaoArticles: getCodedaoArticles,
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Index);

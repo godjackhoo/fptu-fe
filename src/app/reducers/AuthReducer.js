@@ -1,5 +1,10 @@
 const initialState = {
-    logged: false,
+    logged    : false,
+    isAdmin   : false,
+    appProfile: {
+        author : "Huynh Minh Tu",
+        address: "https://mrhmt.com",
+    },
 };
 
 export default (state = initialState) => {

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./MyConfess.scss";
 
 import moment from "moment";
 
@@ -61,7 +60,7 @@ class MyConfess extends Component {
                         loading: false,
                     });
                 });
-        }, 1000);
+        }, 100);
     };
 
     getOverview = callback => {
@@ -145,8 +144,8 @@ class MyConfess extends Component {
             <div style={{ margin: ".5rem 0" }}>
                 <strong>
                     Lí do bị
-                    {approver}
-                    {' '}
+                    {" " + approver}
+                    {" "}
 từ chối:
                     {" "}
                 </strong>
@@ -181,12 +180,6 @@ từ chối:
                 </Helmet>
                 <div className="content-wrapper">
                     <h2>Danh sách confession tui đã gửi</h2>
-                    {/* <Row style={{ marginBottom: "10px" }}>
-                        Sender Token của tui là:{" "}
-                        <Tag color="cyan">
-                            {LocalStorageUtils.getSenderToken()}
-                        </Tag>
-                    </Row> */}
 
                     <Row style={{ marginBottom: "10px" }}>
                         <Alert

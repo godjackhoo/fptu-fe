@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 
 import { Layout } from "antd";
 
 const { Footer } = Layout;
 
-class FooterPage extends Component {
+class FooterPage extends PureComponent {
     render() {
         return (
             <Footer style={{ textAlign: "center" }}>
@@ -35,6 +35,11 @@ class FooterPage extends Component {
                         alt="golang"
                     />
                     <img
+                        src="/assets/images/icons/nodejs.png"
+                        width="50px"
+                        alt="nodejs"
+                    />
+                    <img
                         src="/assets/images/icons/react.png"
                         width="50px"
                         alt="reactjs"
@@ -53,6 +58,21 @@ class FooterPage extends Component {
                         src="/assets/images/icons/gcp.png"
                         width="50px"
                         alt="gcp"
+                    />
+                    <img
+                        src="/assets/images/icons/kubernetes.png"
+                        width="50px"
+                        alt="kubernetes"
+                    />
+                    <img
+                        src="/assets/images/icons/elastic.png"
+                        width="50px"
+                        alt="elastic"
+                    />
+                    <img
+                        src="/assets/images/icons/jenkins.png"
+                        width="50px"
+                        alt="jenkins"
                     />
                 </div>
             </Footer>

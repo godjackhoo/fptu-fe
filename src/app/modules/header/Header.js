@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { Layout, Menu, Icon, Button, notification } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -6,7 +6,7 @@ import LocalStorageUtils, { LOCAL_STORAGE_KEY } from "../../utils/LocalStorage";
 
 const { Header } = Layout;
 
-class HeaderPage extends Component {
+class HeaderPage extends PureComponent {
     onLogout = e => {
         e.preventDefault();
 
@@ -25,7 +25,7 @@ class HeaderPage extends Component {
                 onClick={() => {
                     const { history } = this.props;
                     notification.close(key);
-                    history.push("/news");
+                    history.push("/medium");
                 }}
             >
                 Ờm, để đọc thử xem
@@ -58,19 +58,14 @@ class HeaderPage extends Component {
         let currentKey = history.location.pathname;
         if (currentKey === "/") {
             currentKey = "/home";
-        } else if (currentKey === "/admin-cp") {
-            currentKey = "/login";
-        } else if (currentKey.includes("/post")) {
-            currentKey = "/news";
+        } else if (currentKey.includes("/fpt")) {
+            currentKey = "/home";
+        } else if (currentKey.includes("/medium")) {
+            currentKey = "/medium";
         } else if (currentKey.includes("/toidicodedao")) {
             currentKey = "/toidicodedao";
         } else if (currentKey.includes("/pentakill")) {
             currentKey = "/pentakill";
-        }
-
-        let Snow = () => <div />;
-        if (typeof window !== "undefined") {
-            Snow = require("react-snow-effect");
         }
 
         return (
@@ -112,6 +107,26 @@ class HeaderPage extends Component {
                                 </Link>
                             </Menu.Item>
                         )}
+                        <Menu.Item key="/search">
+                            <Link to="/search">
+                                <Icon type="book" />
+                                Thư viện confess
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="execption">
+                            <a
+                                href="https://tinyurl.com/noiquyFPTUHCMCFS"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Icon type="exception" />
+                                Quy định
+                            </a>
+                        </Menu.Item>
+                        <Menu.Item key="instagram">
+                            <Icon type="instagram" />
+                            Instagram
+                        </Menu.Item>
                         {!LocalStorageUtils.isAuthenticated() && (
                             <Menu.Item key="/login">
                                 <Link to="/admin-cp">
@@ -124,8 +139,7 @@ class HeaderPage extends Component {
                             <Menu.Item key="/admin-cp">
                                 <Link to="/admin-cp">
                                     <Icon type="github" />
-                                    Admin CP (chào
-                                    {" "}
+                                    Admin CP (
                                     <strong>
                                         {LocalStorageUtils.getNickName()}
                                     </strong>
@@ -154,8 +168,8 @@ class HeaderPage extends Component {
                             </span>
 )}
                     >
-                        <Menu.Item key="/news">
-                            <Link to="/news">
+                        <Menu.Item key="/medium">
+                            <Link to="/medium">
                                 <Icon type="medium" />
                                 Medium cho Dev
                             </Link>
@@ -169,15 +183,15 @@ class HeaderPage extends Component {
                         </Menu.Item>
                     </SubMenu>
 
-                    {/* <Menu.Item key="/pentakill">
-                        <Link to="/pentakill">
-                            <Icon type="trophy" />
-                            How to Pentakill
-                        </Link>
-                    </Menu.Item> */}
+                    <Menu.Item key="source" disabled>
+                        <Icon type="key" />
+                        Thư viện Source
+                    </Menu.Item>
+                    <Menu.Item key="forum" disabled>
+                        <Icon type="fire" />
+                        Diễn đàn ẩn danh
+                    </Menu.Item>
                 </Menu>
-
-                <Snow />
             </Header>
         );
     }

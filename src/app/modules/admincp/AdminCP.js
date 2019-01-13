@@ -12,6 +12,7 @@ import {
     Alert,
     Row,
     Modal,
+    Switch,
     message,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
@@ -46,6 +47,7 @@ class AdminCP extends Component {
         },
         scheduledTime: null,
         isPosting    : false,
+        approvalMode : true,
     };
 
     componentDidMount() {
@@ -85,7 +87,7 @@ class AdminCP extends Component {
                         history.push("/login");
                     }
                 });
-        }, 1000);
+        }, 100);
     };
 
     getOverview = callback => {
@@ -95,7 +97,7 @@ class AdminCP extends Component {
     };
 
     onLoadMore = () => {
-        const { numLoad, data } = this.state;
+        const { numLoad, data, approvalMode } = this.state;
 
         this.setState({
             loading: true,
@@ -117,6 +119,10 @@ class AdminCP extends Component {
                     // In real scene, you can using public method of react-virtualized:
                     // https://stackoverflow.com/questions/46700726/how-to-use-public-method-updateposition-of-react-virtualized
                     window.dispatchEvent(new Event("resize"));
+
+                    if (approvalMode) {
+                        message.success("Vừa load thêm 10 cái confess nữa nhé");
+                    }
                 }
             );
         });
@@ -229,6 +235,7 @@ class AdminCP extends Component {
                 // Update UI
                 list[index].approver = LocalStorageUtils.getNickName();
                 list[index].status = 2;
+                list[index].reason = reason;
 
                 this.setState({ list });
                 message.success(`Confession này đã bị từ chối`);
@@ -242,7 +249,12 @@ class AdminCP extends Component {
         <div className="confess-content">{content}</div>
     );
 
-    approvedConfess = (content, approver = "admin", cfs_id = "0") => (
+    approvedConfess = (
+        content,
+        approver = "admin",
+        cfs_id = "0",
+        approveTime
+    ) => (
         <div>
             <div className="confess-content">{content}</div>
             <div style={{ margin: ".5rem 0" }}>
@@ -263,11 +275,18 @@ class AdminCP extends Component {
 #
                     {approver}
                 </Tag>
+                <span>
+                    Duyệt lúc
+                    {" "}
+                    <strong>
+                        {moment(approveTime).format("HH:mm DD/MM/YYYY")}
+                    </strong>
+                </span>
             </div>
         </div>
     );
 
-    rejectedConfess = (content, approver = "admin") => (
+    rejectedConfess = (content, approver = "admin", reason) => (
         <div>
             <div className="confess-content">
                 <strike>{content}</strike>
@@ -277,6 +296,15 @@ class AdminCP extends Component {
 #
                     {approver}
                 </Tag>
+                <span
+                    style={{
+                        color     : "white",
+                        background: "red",
+                        padding   : "0.4rem",
+                    }}
+                >
+                    {reason || "Không có lí do luôn"}
+                </span>
             </div>
         </div>
     );
@@ -292,7 +320,7 @@ class AdminCP extends Component {
 
     handleOkRejectModal = e => {
         e.preventDefault();
-        const { rejectModal } = this.tate;
+        const { rejectModal } = this.state;
         const { id, reason } = rejectModal;
 
         this.handleReject(id, (reason && reason.trim()) || null);
@@ -381,6 +409,14 @@ class AdminCP extends Component {
         }
     };
 
+    handleApprovalMode () {
+        const {approvalMode} = this.state;
+
+        this.setState({
+            approvalMode: !approvalMode,
+        });
+    }
+
     findIndex(id) {
         const { list } = this.state;
 
@@ -403,6 +439,7 @@ class AdminCP extends Component {
             approveModal,
             // scheduledTime,
             isPosting,
+            approvalMode,
         } = this.state;
 
         const loadMore =
@@ -416,7 +453,7 @@ class AdminCP extends Component {
                     }}
                 >
                     <Button onClick={this.onLoadMore} hidden={!list}>
-                        tải thêm confess
+                        Tải thêm confess cũ
                     </Button>
                 </div>
             ) : null;
@@ -466,12 +503,22 @@ cái
                         showIcon
                     />
 
+                    <div style={{marginTop: "1rem", marginBottom: "1rem"}}>
+                        <Switch
+                            checkedChildren="Chỉ chưa duyệt"
+                            unCheckedChildren="Chỉ chưa duyệt"
+                            onChange={() => this.handleApprovalMode()}
+                            defaultChecked
+                        />
+                    </div>
+                    
+
                     <List
                         size="large"
                         loading={initLoading}
                         itemLayout="vertical"
                         loadMore={loadMore}
-                        dataSource={list || []}
+                        dataSource={approvalMode ? list.filter(item => item.status === 0) : list || []}
                         locale={{ emptyText: "Méo có dữ liệu" }}
                         renderItem={(item, index) => (
                             <List.Item
@@ -516,12 +563,14 @@ cái
                                         this.approvedConfess(
                                             item.content,
                                             item.approver,
-                                            item.cfs_id
+                                            item.cfs_id,
+                                            item.updated_at
                                         )}
                                     {item.status === 2 &&
                                         this.rejectedConfess(
                                             item.content,
-                                            item.approver
+                                            item.approver,
+                                            item.reason
                                         )}
                                 </Skeleton>
                             </List.Item>
@@ -546,7 +595,7 @@ cái
                             type="primary"
                             onClick={this.handleOkRejectModal}
                         >
-                            Từ cmn chối
+                            Từ chối
                         </Button>,
                     ]}
                 >

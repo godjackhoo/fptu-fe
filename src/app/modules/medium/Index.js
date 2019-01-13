@@ -12,51 +12,22 @@ import {
     Divider,
 } from "antd";
 
-import moment from "moment";
 import { Link } from "react-router-dom";
 import Helmet from "react-helmet-async";
 import paramCase from "param-case";
-import { getArticles } from "../../utils/Crawl";
-import LocalStorageUtils, { LOCAL_STORAGE_KEY } from "../../utils/LocalStorage";
+import { connect } from "react-redux";
+import { getMediumArticles } from "./actions/MediumActions";
 
 const { Content } = Layout;
 const { Meta } = Card;
 
-class News extends Component {
-    state = {
-        loading: true,
-        posts  : [],
-    };
-
+class Index extends Component {
     componentDidMount() {
-        const newsExpire = parseInt(
-            LocalStorageUtils.getItem(
-                LOCAL_STORAGE_KEY.MEDIUM_NEWS_EXPIRE,
-                null
-            )
-        );
-        const now = parseInt(moment().unix());
+        const { getMediumArticles, mediumReducer } = this.props;
+        const { posts } = mediumReducer;
 
-        if (
-            LocalStorageUtils.getItem(LOCAL_STORAGE_KEY.MEDIUM_NEWS, null) !==
-                null &&
-            now - newsExpire <= 0
-        ) {
-            const posts = JSON.parse(
-                LocalStorageUtils.getItem(LOCAL_STORAGE_KEY.MEDIUM_NEWS, null)
-            );
-
-            this.setState({
-                posts,
-                loading: false,
-            });
-        } else {
-            getArticles().then(posts => {
-                this.setState({
-                    posts,
-                    loading: false,
-                });
-            });
+        if (!posts.length) {
+            getMediumArticles();
         }
     }
 
@@ -86,7 +57,7 @@ class News extends Component {
 
             return (
                 <Link
-                    to={`/post/${guid}/${paramCase(post.title)}`}
+                    to={`/medium/${guid}/${paramCase(post.title)}`}
                     key={post.guid}
                 >
                     <Col lg={8} md={12}>
@@ -120,7 +91,8 @@ class News extends Component {
     };
 
     render() {
-        const { loading, posts } = this.state;
+        const { mediumReducer } = this.props;
+        const { loading, posts } = mediumReducer;
 
         return (
             <Content className="content-container">
@@ -140,13 +112,13 @@ class News extends Component {
                             <span style={{ color: "darkblue" }}>DEV</span>
                             {' '}
 Đọc
-                            {loading && (
+                            {(loading || !posts) && (
                             <Icon
                                 type="loading"
                                 style={{ marginLeft: "1rem" }}
                             />
                             )}
-                            {!loading && (
+                            {!loading && posts && (
                                 <span
                                     style={{
                                         marginLeft: "1rem",
@@ -173,7 +145,7 @@ hàng ngày
                     {posts && !loading && (
                         <Row gutter={16}>{this.renderPosts(posts)}</Row>
                     )}
-                    {loading && (
+                    {(loading || !posts) && (
                         <div>
                             <Skeleton active />
                             <Skeleton active />
@@ -186,4 +158,17 @@ hàng ngày
     }
 }
 
-export default News;
+const mapStateToProps = ({ mediumReducer }) => {
+    return {
+        mediumReducer,
+    };
+};
+
+const mapDispatchToProps = {
+    getMediumArticles: getMediumArticles,
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Index);

@@ -1,5 +1,9 @@
-//eslint-disable-next-line
-import manifest from "../../dist/client/manifest.json";
+const manifest =
+    ENVIRONMENT === "staging"
+        ? //eslint-disable-next-line
+          require("../../dist/staging/client/manifest.json")
+        : //eslint-disable-next-line
+          require("../../dist/production/client/manifest.json");
 
 const vendorCss = [manifest["vendors.css"], manifest["browser.css"]];
 const vendorJs = [manifest["vendors.js"], manifest["browser.js"]];
@@ -12,10 +16,17 @@ export default ({ html, preState, helmet, bundles }) => {
 <html lang="en" ${helmet.htmlAttributes.toString()}>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="FPTU Technology Insider">
     <meta name="keywords" content="FPTU, FPTU University, FPTU Technology, FPTU HCM Confession">
     <meta name="author" content="Huynh Minh Tu [React - NodeJS + Golang]">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="/assets/images/fptuhcm-confessions.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="manifest" href="/assets/manifest.json">
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="FPT University Tech Insider, How much does culture influence creative thinking?" />
+    <meta property="og:image" content="https://cdn-images-1.medium.com/max/1024/1*hMHI6laZkdZMdZNnSQg5AA.jpeg" />
     ${helmet.title.toString()}
     ${helmet.link.toString()}
     ${helmet.meta.toString()}

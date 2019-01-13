@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 
-import "./Login.scss";
-
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import Helmet from "react-helmet-async";
 import { Form, Icon, Input, Button, Checkbox, Layout, message } from "antd";
@@ -94,6 +92,7 @@ class LoginForm extends Component {
             LocalStorageUtils.setItem(LOCAL_STORAGE_KEY.EMAIL, email);
             LocalStorageUtils.setItem(LOCAL_STORAGE_KEY.NICKNAME, nickname);
             const { history } = this.props;
+            message.success(`Chào mừng bợn ${nickname} đã quay lại ahihi`);
             history.push("/admin-cp");
         } else {
             message.error("Thông tin đăng nhập không chính xác!");
@@ -110,12 +109,12 @@ class LoginForm extends Component {
                     <title>Đăng nhập - FPTU Tech Insider</title>
                 </Helmet>
                 <div className="content-wrapper">
-                    <h2>Đăng nhập dành cho admin</h2>
                     <Form
                         onSubmit={this.handleSubmit}
                         className="login-form"
-                        style={{ maxWidth: 360 }}
+                        style={{ maxWidth: 360, margin: "auto" }}
                     >
+                        <h2>Đăng nhập dành cho admin</h2>
                         <FormItem>
                             {getFieldDecorator("email", {
                                 rules: [
@@ -175,54 +174,27 @@ class LoginForm extends Component {
                                 </Checkbox>
                             )}
                         </FormItem>
-                    </Form>
 
-                    <FacebookLogin
-                        appId="505017836663886"
-                        autoLoad={false}
-                        fields="name,email,picture"
-                        scope="pages_show_list,manage_pages,publish_pages"
-                        onClick={this.componentClicked}
-                        callback={this.responseFacebook}
-                        render={renderProps => (
-                            <Button
-                                type="primary"
-                                size="large"
-                                className="login-form-button"
-                                onClick={renderProps.onClick}
-                            >
-                                <Icon type="facebook" />
-                                Đăng nhập bằng Facebook
-                            </Button>
-                        )}
-                    />
-                    <div
-                        style={{
-                            textAlign      : "center",
-                            marginTop      : "2rem",
-                            backgroundColor: "#414141",
-                            color          : "#fff",
-                            padding        : "1rem 1rem .2rem 1rem",
-                            borderRadius   : "1rem",
-                        }}
-                    >
-                        <img
-                            src="/assets/images/golang-react.jpg"
-                            alt=""
-                            style={{
-                                width       : "100%",
-                                maxWidth    : "720px",
-                                marginBottom: "1rem",
-                                borderRadius: ".5rem",
-                            }}
-                            className="blur"
+                        <FacebookLogin
+                            appId="505017836663886"
+                            autoLoad={false}
+                            fields="name,email,picture"
+                            scope="pages_show_list,manage_pages,publish_pages"
+                            onClick={this.componentClicked}
+                            callback={this.responseFacebook}
+                            render={renderProps => (
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    className="login-form-button"
+                                    onClick={renderProps.onClick}
+                                >
+                                    <Icon type="facebook" />
+                                    Đăng nhập bằng Facebook
+                                </Button>
+                            )}
                         />
-                        <p style={{ fontSize: "1rem" }}>
-                            Read more tech posts at
-                            {" "}
-                            <strong>fptu.tech/news</strong>
-                        </p>
-                    </div>
+                    </Form>
                 </div>
             </Content>
         );
